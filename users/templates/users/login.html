@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="{% static 'styles/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/login.css' %}">
+</head>
+<body>
+    {% include 'site_main/nav-bar.html' %}
+
+        <div class="login">
+        <div class="log-text">
+            <p class="login-text">Вхід</p>
+        </div>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for f in form %}
+                <div class="box-form-input">
+                    <p class="form-text">{{ f.label }}</p>
+                    {{ f }}
+                </div>
+            {% endfor %}
+          {% if form.non_field_errors %}
+              <p class="login-error">{{ form.non_field_errors|join:" "|cut:"*" }}</p>
+          {% endif %}
+
+            <div class="submit-form">
+                <input type="submit" value="Увійти" class="submit-btn">
+            </div>
+        </form>
+    <div class="forgot-register">
+        <p>Не маєте аккаунта? <a href="{% url 'users:register' %}">Зареєструватися</a></p>
+    </div>
+    </div>
+
+</body>
+</html>

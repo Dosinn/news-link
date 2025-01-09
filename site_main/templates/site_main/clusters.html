@@ -1,0 +1,70 @@
+{% for cluster in clusters %}
+
+  {% if cluster.articles_count > 1 %}
+    <div class="article-card">
+      <div class="swiper mySwiper">
+
+        <div class="swiper-wrapper">
+          {% for article in cluster.articles %}
+          <div class="swiper-slide">
+            <div class="article-img">
+              <img src="{{ article.img_url }}" alt="" class="card-img" loading="lazy">
+            </div>
+            <div class="article-title-card">
+                <a href="{% url 'article' article_id=article.id %}" class="article-link">
+                    <p class="article-title">{{ article.title }}</p>
+                </a>
+            </div>
+              <div class="parent-container">
+                <div class="article-date-card">
+                  <p class="article-date">{{ article.date }}</p>
+                    {% if article.source == 'tsn' %}
+                        <a href="https://tsn.ua/" class="article-source-href"><p class="article-source">ТСН</p></a>
+                    {% elif article.source == 'unian' %}
+                        <a href="https://www.unian.ua/" class="article-source-href"><p class="article-source">Уніан</p></a>
+                    {% elif article.source == 'radio_svoboda' %}
+                        <a href="https://www.radiosvoboda.org/" class="article-source-href"><p class="article-source">Радіо Свобода</p></a>
+                    {% endif %}
+                  <p>Перегляди: {{ article.views }}</p>
+                </div>
+              </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="slider-control">
+            <div class="swiper-pagination"></div>
+
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+
+      </div>
+    </div>
+
+
+  {% else %}
+    <div class="article-card">
+      <div class="article-img">
+          <img src="{{ cluster.first_article.img_url }}" alt="" class="card-img" loading="lazy">
+      </div>
+      <div class="article-title-card">
+        <a href="{% url 'article' article_id=cluster.first_article.id %}" class="article-link">
+          <p class="article-title">{{ cluster.first_article.title }}</p>
+        </a>
+      </div>
+      <div class="article-date-card">
+        <p class="article-date">{{ cluster.first_article.date }}</p>
+        {% if cluster.first_article.source == 'tsn' %}
+            <a href="https://tsn.ua/" class="article-source-href"><p class="article-source">ТСН</p></a>
+        {% elif cluster.first_article.source == 'unian' %}
+            <a href="https://www.unian.ua/" class="article-source-href"><p class="article-source">Уніан</p></a>
+        {% elif cluster.first_article.source == 'radio_svoboda' %}
+            <a href="https://www.radiosvoboda.org/" class="article-source-href"><p class="article-source">Радіо Свобода</p></a>
+        {% endif %}
+        <p>Перегляди: {{ cluster.first_article.views }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+{% endfor %}

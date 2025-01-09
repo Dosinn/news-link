@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article_content.title }}</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+    <link rel="stylesheet" href="{% static 'styles/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/new_page.css' %}">
+
+</head>
+<body>
+    {% include 'site_main/nav-bar.html' %}
+
+    <main class="main-content">
+        <div class="new-main">
+            <h2 class="new-title">{{ article_content.title }}</h2>
+            <p class="date-info">Дата публікації: {{ article_content.date }}</p>
+
+            <div class="arcitle-content">
+                <img src="{{ article_content.main_img.src }}" alt="" class="new-img" loading="lazy">
+                <p class="img-sign">{{ article_content.main_img.sign }}</p>
+                <p class="new-text"></p>
+                {{ article_content.content|safe }}
+            </div>
+        </div>
+
+        <div class="new-source-info">
+            <h2 class="new-title">Джерело:</h2>
+            <div class="source-info">
+                <img src="https://tsn.ua/static/pub/img/logo-sm.svg?v=d88" alt="" class="source-logo">
+                <a href='https://tsn.ua' class="source-link">https://tsn.ua</a>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+</html>

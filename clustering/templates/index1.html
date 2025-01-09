@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="icon" href="{% static 'imgs/logo_icon.svg' %}">
+    <link rel="icon" href="{% static 'imgs/logo2.svg' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'styles/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+
+
+    <title>Document</title>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="logo">
+            <a href="{% url 'home' %}"><img src="{%  static 'imgs/logo2.svg' %}" class="logo" style="margin-right: 10px; height: 65px; fill: #323232;"></a>
+{#                <img src="{%  static 'imgs/logo_text.svg' %}" class="logo" >#}
+        </div>
+
+    {% if filter == 0 %}
+    <div id="source-filter" class="filter-container">
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="tsn">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/tsn.jpg' %}" alt="TSN">
+            </span>
+            <span class="filter-label">TSN</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="unian">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/unian.png' %}" alt="Unian">
+            </span>
+            <span class="filter-label">Unian</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="radio_svoboda">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/radio_svoboda.jpeg' %}" alt="Радіо Свобода">
+            </span>
+            <span class="filter-label">Радіо свобода</span>
+        </label>
+    </div>
+
+    {% else %}
+        {{ filter|safe }}
+    {% endif %}
+    </nav>
+
+    <div class="articles">
+        {% include 'site_main/clusters.html' with clusters=clusters %}
+    </div>
+
+    <script src="{% static 'js/index.js' %}"></script>
+
+    <div class="pagination">
+        {% include 'site_main/paginator.html' with clusters=clusters %}
+    </div>
+
+
+<script>
+    function getFilterHtml() {
+    const clone = $('#source-filter').clone(); // Клонуємо форму
+
+    // Оновлюємо стани полів
+    clone.find('input, select, textarea').each(function () {
+        if ($(this).is(':checkbox, :radio')) {
+            $(this).attr('checked', $(this).prop('checked') ? 'checked' : null);
+        } else if ($(this).is('input, textarea')) {
+            $(this).attr('value', $(this).val());
+        } else if ($(this).is('select')) {
+            $(this).find('option').each(function () {
+                $(this).attr('selected', $(this).is(':selected') ? 'selected' : null);
+            });
+        }
+    });
+
+    return clone.prop('outerHTML'); // Отримуємо HTML-код форми
+}
+
+    $(document).ready(function () {
+        $('.source-checkbox').change(function () {
+            // Отримуємо всі обрані джерела
+            const selectedSources = $('.source-checkbox:checked').map(function () {
+                return this.value;
+            }).get();
+
+            const url = new URL(window.location);
+
+            url.searchParams.set('page', 1);
+
+            window.history.pushState({}, '', url);
+
+            $.ajax({
+                url: "{% url 'filter_news' %}",
+                type: "POST",
+                data: {
+                    'sources': selectedSources,
+                    'filter_source': getFilterHtml(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    $('.articles').html(response.articles);
+                    $('.pagination').html(response.paginator);
+                    SwiperUpload();
+                },
+                error: function () {
+                    alert('Помилка завантаження новин');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

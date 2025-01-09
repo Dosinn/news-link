@@ -1,0 +1,107 @@
+.login {
+    border-radius: 20px;
+    box-shadow: 0 0 14px rgba(0,0,0,0.3);
+    width: 573px;
+    height: 524px;
+
+    align-self: center ;
+    justify-self: center;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 10px;
+    margin-top: 100px;
+}
+.login-text {
+
+    color: #000;
+
+font-size: 48px;
+font-style: normal;
+font-weight: 600;
+line-height: 100px; /* 208.333% */
+
+}
+.log-text {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    margin-top: 10px;
+}
+.box-form-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-top: 35px;
+    margin-bottom: 15px;
+}
+.form-text {
+    color: #000;
+
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+
+    width: 400px;
+    margin-bottom: 5px;
+}
+.form-input {
+    width: 400px;
+    height: 50px;
+    flex-shrink: 0;
+
+    border-radius: 8px;
+    border: 2px solid #005BBB;
+    background: #FFF;
+
+    color: #000;
+
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
+}
+.form-input::placeholder {
+    font-size: 18px;
+    left: 10px;
+}
+.submit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.submit-btn {
+    display: inline-flex;
+    padding: 12px 24px;
+    align-items: flex-start;
+    gap: 10px;
+
+    border-radius: 8px;
+    background: #005BBB;
+    border: none;
+
+    color: #FFF;
+
+    text-align: center;
+
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 100% */
+
+    cursor: pointer;
+}
+.login-error {
+    margin-top: 20px;
+    text-align: center;
+}
+.forgot-register {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}

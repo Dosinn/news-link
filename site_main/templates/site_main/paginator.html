@@ -1,0 +1,30 @@
+<ul class="pagination">
+  {% if clusters.has_previous %}
+    <li><a href="?page={{ clusters.previous_page_number }}" class="pagination-prev"><i class="fa-solid fa-arrow-left"></i></a></li>
+  {% endif %}
+
+  {% if clusters.number > 3 %}
+    <li><a href="?page=1" class="pagination-link">1</a></li>
+    {% if clusters.number > 4 %}
+      <li><span class="pagination-dots">...</span></li>
+    {% endif %}
+  {% endif %}
+
+  {% for num in clusters.paginator.page_range %}
+    {% if clusters.number == num %}
+      <li><a href="?page={{ num }}" class="pagination-link active">{{ num }}</a></li>
+    {% elif num > clusters.number|add:'-3' and num < clusters.number|add:'3' %}
+      <li><a href="?page={{ num }}" class="pagination-link">{{ num }}</a></li>
+    {% endif %}
+  {% endfor %}
+
+  {% if clusters.has_next %}
+    {% if clusters.number < clusters.paginator.num_pages|add:'-3' %}
+      <li><span class="pagination-dots">...</span></li>
+      <li><a href="?page={{ clusters.paginator.num_pages }}" class="pagination-link">{{ clusters.paginator.num_pages }}</a></li>
+    {% elif clusters.number < clusters.paginator.num_pages|add:'-2' %}
+      <li><a href="?page={{ clusters.paginator.num_pages }}" class="pagination-link">{{ clusters.paginator.num_pages }}</a></li>
+    {% endif %}
+    <li><a href="?page={{ clusters.next_page_number }}" class="pagination-next"><i class="fa-solid fa-arrow-right"></i></a></li>
+  {% endif %}
+</ul>

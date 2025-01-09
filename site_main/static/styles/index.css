@@ -1,0 +1,341 @@
+.nav-bar {
+    margin: 0;
+    padding: 10px 2vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: auto; /* Автоматична висота */
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    flex-wrap: wrap; /* Дозволяє перенос елементів */
+    -webkit-flex-wrap: wrap; /* Для Safari */
+}
+
+.articles {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+    /*margin: auto 8vw;*/
+    justify-content: center;
+    flex-basis: 20%;
+
+    margin: 0 auto;
+
+}
+.article-card {
+    width: 16vw;
+    /*height: 10vw;*/
+    height: auto;
+    min-width: 330px;
+    min-height: 230px;
+
+    box-shadow: 0 0 14px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    margin: 2rem 1rem;
+    padding: .5vw;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.article-img {
+    display: flex;
+    justify-content: space-between;
+
+    min-width: 325px;
+    /*height: 9vw;*/
+    min-height: 183px;
+
+    width: calc(100% + 1vw); /* Додаємо відсутній простір */
+    margin: -0.5vw; /* Нейтралізуємо паддінг батьківського елемента */
+
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-img {
+    min-width: 325px;
+    /*height: 9vw;*/
+    min-height: 183px;
+
+    width: calc(100% + 1vw); /* Додаємо відсутній простір */
+    /*margin: -0.5vw; !* Нейтралізуємо паддінг батьківського елемента *!*/
+
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+    object-fit: cover;
+    aspect-ratio: 16 / 9;
+}
+.article-link {
+    text-decoration: none;
+}
+.article-title {
+    font-size: 18px;
+    line-height: 1.2;
+    /*text-align: justify;*/
+    color: #000;
+    font-weight: 500;
+    margin-top: 1vw;
+}
+.article-date {
+    padding: 1vh 0 0 0;
+    margin-top: auto;
+}
+
+.article-date-card {
+    justify-self: flex-end;
+    align-self: start;
+    width: 100%;
+    margin-bottom: 5px;
+    line-height: 1.3;
+
+    margin-top: auto; /* Притискає елемент до низу */
+    opacity: 0.7;
+}
+
+/*SLIDER*/
+.mySwiper {
+  position: relative;
+    width: 100%;
+  height: 100%;
+
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+}
+.swiper-slide .card-img {
+    /*width: calc(100% + 1vw); !* Додаємо відсутній простір *!*/
+    /*margin: -0.5vw; !* Нейтралізуємо паддінг батьківського елемента *!*/
+    box-sizing: border-box; /* Усуває проблеми з відступами */
+}
+
+.swiper, .swiper-slide {
+    margin: 0;
+    padding: 0;
+}
+
+.article-card .swiper {
+  height: 100%;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: #fff;
+  z-index: 10;
+
+  position: absolute;
+  top: 50%;
+
+  text-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 36px !important;
+}
+
+.swiper-button-prev {
+  left: 6px;
+}
+
+.swiper-button-next {
+  right: 6px;
+}
+
+.swiper-pagination-bullet {
+  background: #fff;
+    opacity: 1;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+}
+
+.swiper-pagination-bullet-active {
+  background: #3697FF;
+  opacity: 1;
+}
+.slider-control {
+    width: 16vw;
+    min-width: 325px;
+    height: 9vw;
+    min-height: 183px;
+
+    position: absolute;
+    top: 0;
+}
+.article-source {
+    float: right;
+    top: 0;
+    font-size: 16px;
+
+}
+/* Стилі для батьківського контейнера */
+.parent-container {
+    display: flex; /* Використовуємо flexbox */
+    flex-direction: column; /* Вертикальне розташування елементів */
+    justify-content: space-between; /* Вирівнювання вмісту */
+    flex-grow: 1; /* Заповнення доступного простору */
+    width: 100%;
+}
+
+        /* Контейнер для фільтрів */
+.filter-container {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center; /* Центрування фільтрів */
+        flex-grow: 1; /* Фільтри займають весь доступний простір */
+}
+
+/* Кожен пункт фільтра */
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Ефекти при наведенні */
+.filter-option:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* При виборі (активний стан) */
+.filter-option input:checked + .filter-icon + .filter-label {
+    font-weight: bold;
+  color: #007bff;
+}
+
+.filter-option input {
+    display: none; /* Ховаємо чекбокс */
+}
+
+/* Іконки */
+.filter-icon img {
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+}
+
+/* Текст */
+.filter-label {
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+.article-source-href {
+    text-decoration: none;
+    color: black;
+    opacity: 1;
+}
+
+/* Загальний контейнер пагінатора */
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Посилання пагінатора */
+.pagination-link {
+  display: inline-block;
+  padding: 8px 14px; /* Зменшені відступи для компактності */
+  color: #333;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-radius: 6px; /* Закруглені краї */
+  transition: all 0.3s ease;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+/* Активна сторінка */
+.pagination-link.active {
+  background-color: #007bff; /* Синій колір */
+  color: white;
+  border: 1px solid #007bff;
+  font-weight: bold;
+    text-decoration: none;
+}
+
+/* Ефект при наведенні */
+.pagination-link:hover {
+  background-color: #f1f1f1;
+  border-color: #ccc;
+}
+
+/* Кнопки Prev і Next */
+.pagination-prev, .pagination-next {
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+  padding: 5px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+.pagination-prev:hover, .pagination-next:hover {
+  background-color: #f1f1f1;
+  border-color: #ccc;
+}
+
+/* Точки (для пропуску сторінок) */
+.pagination-dots {
+  display: inline-block;
+  padding: 8px 14px;
+  color: #999;
+  font-size: 15px;
+}
+@media (max-width: 768px) {
+    .nav-bar {
+        flex-direction: column; /* Логотип і фільтри стають вертикальними */
+        align-items: center; /* Центрування логотипа */
+        position: static; /* Логотип не прикріплений */
+        padding: 20px 2vw; /* Додаткові відступи */
+    }
+
+    .filter-container {
+        margin-top: 15px; /* Відступи між логотипом і фільтрами */
+        justify-content: center; /* Центруємо фільтри */
+        position: sticky;
+    }
+
+    .logo {
+        position: relative; /* Логотип не фіксований */
+        margin-bottom: 10px; /* Відступ знизу */
+    }
+    .swiper-button-prev {
+        display: none;
+    }
+
+    .swiper-button-next {
+      display: none;
+    }
+}
