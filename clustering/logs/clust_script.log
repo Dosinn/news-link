@@ -1,0 +1,44 @@
+2025-05-27 15:30:10,023 [INFO] Using device: cpu
+2025-05-27 15:30:10,026 [INFO] Load pretrained SentenceTransformer: /home/ubuntu/news-link/clustering/static/best_model
+2025-05-27 15:30:11,397 [INFO] ...Starting parsing...
+Parsing all tsn page-1:   0%|          | 0/12 [00:00<?, ?it/s]Parsing all tsn page-1: 100%|██████████| 12/12 [00:00<00:00, 6215.32it/s]
+TSN ERROR - 'NoneType' object is not subscriptable
+TSN ERROR - 'NoneType' object is not subscriptable
+Parsing all unian:   0%|          | 0/20 [00:00<?, ?it/s]Parsing all unian: 100%|██████████| 20/20 [00:00<00:00, 16073.21it/s]
+RADIO_SVOBODA ERROR - 'NoneType' object has no attribute 'find'
+Parsing all radio_svoboda: 0it [00:00, ?it/s]Parsing all radio_svoboda: 0it [00:00, ?it/s]
+Parsing all ukrinform:   0%|          | 0/29 [00:00<?, ?it/s]Parsing all ukrinform: 100%|██████████| 29/29 [00:00<00:00, 21928.04it/s]
+Parsing all interfax:   0%|          | 0/29 [00:00<?, ?it/s]Parsing all interfax: 100%|██████████| 29/29 [00:00<00:00, 6556.43it/s]
+2025-05-27 15:30:12,708 [INFO] Parsed 84 news items.
+INTERFAX ERROR - 'NoneType' object has no attribute 'findAll'
+INTERFAX ERROR - 'NoneType' object has no attribute 'findAll'
+INTERFAX ERROR - 'NoneType' object has no attribute 'findAll'
+INTERFAX ERROR - 'NoneType' object has no attribute 'findAll'
+Inserting new articles:   0%|          | 0/84 [00:00<?, ?it/s]Inserting new articles:   1%|          | 1/84 [00:00<00:29,  2.79it/s]Inserting new articles:   2%|▏         | 2/84 [00:00<00:17,  4.56it/s]Inserting new articles:   4%|▎         | 3/84 [00:00<00:13,  5.91it/s]Inserting new articles:   5%|▍         | 4/84 [00:00<00:11,  6.78it/s]Inserting new articles:   6%|▌         | 5/84 [00:00<00:10,  7.32it/s]Inserting new articles:  10%|▉         | 8/84 [00:00<00:05, 13.29it/s]Inserting new articles:  13%|█▎        | 11/84 [00:01<00:05, 14.56it/s]Inserting new articles:  15%|█▌        | 13/84 [00:01<00:04, 14.22it/s]Inserting new articles:  19%|█▉        | 16/84 [00:01<00:03, 17.68it/s]Inserting new articles:  23%|██▎       | 19/84 [00:01<00:03, 20.15it/s]Inserting new articles:  26%|██▌       | 22/84 [00:01<00:02, 22.29it/s]Inserting new articles:  30%|██▉       | 25/84 [00:01<00:02, 23.90it/s]Inserting new articles:  33%|███▎      | 28/84 [00:01<00:02, 24.84it/s]Inserting new articles:  37%|███▋      | 31/84 [00:01<00:02, 21.27it/s]Inserting new articles:  40%|████      | 34/84 [00:02<00:02, 16.94it/s]Inserting new articles:  43%|████▎     | 36/84 [00:02<00:03, 15.95it/s]Inserting new articles:  46%|████▋     | 39/84 [00:02<00:02, 18.42it/s]Inserting new articles:  50%|█████     | 42/84 [00:02<00:02, 20.67it/s]Inserting new articles:  54%|█████▎    | 45/84 [00:02<00:01, 22.55it/s]Inserting new articles:  57%|█████▋    | 48/84 [00:02<00:01, 24.01it/s]Inserting new articles:  61%|██████    | 51/84 [00:02<00:01, 25.12it/s]Inserting new articles:  64%|██████▍   | 54/84 [00:03<00:01, 25.91it/s]Inserting new articles:  68%|██████▊   | 57/84 [00:03<00:01, 26.54it/s]Inserting new articles:  71%|███████▏  | 60/84 [00:03<00:01, 22.37it/s]Inserting new articles:  75%|███████▌  | 63/84 [00:03<00:01, 15.26it/s]Inserting new articles:  77%|███████▋  | 65/84 [00:03<00:01, 13.19it/s]Inserting new articles:  81%|████████  | 68/84 [00:04<00:01, 15.93it/s]Inserting new articles:  85%|████████▍ | 71/84 [00:04<00:00, 18.46it/s]Inserting new articles:  88%|████████▊ | 74/84 [00:04<00:00, 20.66it/s]Inserting new articles:  92%|█████████▏| 77/84 [00:04<00:00, 22.50it/s]Inserting new articles:  95%|█████████▌| 80/84 [00:04<00:00, 23.98it/s]Inserting new articles:  99%|█████████▉| 83/84 [00:04<00:00, 24.75it/s]Inserting new articles: 100%|██████████| 84/84 [00:04<00:00, 18.34it/s]
+2025-05-27 15:30:17,290 [INFO] Added 17 new articles.
+2025-05-27 15:30:17,290 [INFO] Updating clusters...
+Clustering articles:   0%|          | 0/17 [00:00<?, ?it/s]2025-05-27 15:30:19,110 [INFO] Created new cluster 43326 for article 'До проєкту "Контракт 18–24" можуть бути долучені спеціальності, пов’язані з дронами - Паліса'
+Clustering articles:   6%|▌         | 1/17 [00:01<00:16,  1.04s/it]2025-05-27 15:30:19,493 [INFO] Added article 'Переговори між Україною та Росією можуть відбутися у Женеві - Келлог' to cluster 42125 with similarity 0.73
+Clustering articles:  12%|█▏        | 2/17 [00:01<00:09,  1.53it/s]2025-05-27 15:30:19,934 [INFO] Created new cluster 43327 for article 'Гендиректорка "Софії Київської": ми себе асоціюємо як абсолютно світська установа'
+Clustering articles:  18%|█▊        | 3/17 [00:01<00:07,  1.80it/s]2025-05-27 15:30:20,368 [INFO] Created new cluster 43328 for article 'Десятий фестиваль українських фільмів відкрив прийом заявок'
+Clustering articles:  24%|██▎       | 4/17 [00:02<00:06,  1.97it/s]2025-05-27 15:30:20,814 [INFO] Created new cluster 43329 for article 'Україна збільшила держзамовлення на навчання за технічними спеціальностями на 27,6% - Свириденко'
+Clustering articles:  29%|██▉       | 5/17 [00:02<00:05,  2.06it/s]2025-05-27 15:30:21,253 [INFO] Created new cluster 43330 for article 'Чи може РФ захопити всю лівобережну Україну: експерт про наступальний потенціал ворога'
+Clustering articles:  35%|███▌      | 6/17 [00:03<00:05,  2.13it/s]2025-05-27 15:30:21,699 [INFO] Created new cluster 43331 for article 'Горова зізналася, де вчиться її син від Потапа і які проблеми має у навчанні: "Виключений з предмету"'
+Clustering articles:  41%|████      | 7/17 [00:03<00:04,  2.16it/s]2025-05-27 15:30:22,069 [INFO] Added article 'Уряд подовжив термін пільгового кредитування з 2 до 5 років для бізнесу в зоні високого воєнного ризику' to cluster 43194 with similarity 0.88
+Clustering articles:  47%|████▋     | 8/17 [00:03<00:03,  2.31it/s]2025-05-27 15:30:22,430 [INFO] Added article 'Кінострічка "Тіні забутих предків" повертається на великі екрани' to cluster 43042 with similarity 0.78
+Clustering articles:  53%|█████▎    | 9/17 [00:04<00:03,  2.44it/s]2025-05-27 15:30:22,875 [INFO] Created new cluster 43332 for article 'Мінкультури хоче змінити керівника, а мені треба ще певний час, щоб підготувати собі заміну - гендиректорка "Софії Київської"'
+Clustering articles:  59%|█████▉    | 10/17 [00:04<00:02,  2.37it/s]2025-05-27 15:30:23,364 [INFO] Created new cluster 43333 for article 'У Києві відновили ще одну багатоповерхівку після обстрілів, ще у 12 тривають ремонтні роботи, - Кличко'
+Clustering articles:  65%|██████▍   | 11/17 [00:05<00:02,  2.26it/s]2025-05-27 15:30:23,803 [INFO] Created new cluster 43334 for article 'У Судані за тиждень від холери померли понад 170 людей '
+Clustering articles:  71%|███████   | 12/17 [00:05<00:02,  2.27it/s]2025-05-27 15:30:24,241 [INFO] Created new cluster 43335 for article 'Національний освітній проєкт CDTO Campus розглядає можливість виходу на міжнародний рівень'
+Clustering articles:  76%|███████▋  | 13/17 [00:06<00:01,  2.27it/s]2025-05-27 15:30:24,676 [INFO] Created new cluster 43336 for article '24 смартфони Xiaomi отримають нову версію HyperOS: шукайте свій у списку'
+Clustering articles:  82%|████████▏ | 14/17 [00:06<00:01,  2.28it/s]2025-05-27 15:30:25,113 [INFO] Created new cluster 43337 for article 'Що потрібно, щоб обличчя схудло: косметологи розповіли, чому у вас не виходить скинути зайві кілограми'
+Clustering articles:  88%|████████▊ | 15/17 [00:07<00:00,  2.28it/s]2025-05-27 15:30:25,555 [INFO] Created new cluster 43338 for article 'Брітні Спірс влаштувала п'яний дебош на борту літака та наїхала на стюардесу'
+Clustering articles:  94%|█████████▍| 16/17 [00:07<00:00,  2.28it/s]2025-05-27 15:30:25,988 [INFO] Created new cluster 43339 for article 'Вирощування помідорів у горщиках: експерт поділився методом ідеального поливання'
+Clustering articles: 100%|██████████| 17/17 [00:07<00:00,  2.29it/s]Clustering articles: 100%|██████████| 17/17 [00:07<00:00,  2.15it/s]
+2025-05-27 15:30:25,989 [INFO] Cluster update process completed.
+2025-05-27 15:30:25,989 [INFO] Updating cache...
+2025-05-27 15:30:25,989 [INFO] POST UPDATED IDS - [42125, 43194, 43042]
+2025-05-27 15:30:25,989 [INFO] POST ALL IDS - [43326, 42125, 43327, 43328, 43329, 43330, 43331, 43194, 43042, 43332, 43333, 43334, 43335, 43336, 43337, 43338, 43339]
+2025-05-27 15:30:25,989 [INFO] skip cashing
+2025-05-27 15:30:25,989 [INFO] Cache update completed.
+2025-05-27 15:30:25,997 [INFO] TIME - 14.599198818206787

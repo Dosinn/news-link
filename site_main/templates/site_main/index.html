@@ -4,143 +4,240 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link rel="stylesheet" href="{% static 'styles/../../../static/../../static/styles/reset.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
-
-    <title>Document</title>
-</head>
-<body>
-    {% include 'site_main/nav-bar.html' %}
-
-    <div class="articles">
-        {% for i in data %}
-        <div class="article-card">
-            <div class="article-img">
-                <img src="{{ i.img_url }}" alt="" class="card-img">
-            </div>
-            <div class="article-title-card">
-                <a href="{% url 'article' article_id=i.id %}" class="article-link">
-                    <p class="article-title">{{ i.title }}</p>
-                </a>
-            </div>
-            <div class="article-date-card">
-                <p class="article-date">{{ i.date }}</p>
-                <p>{{ i.source }}</p>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-<div class="pagination">
-    <span class="step-links">
-        {% if data.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ data.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ data.number }} of {{ data.paginator.num_pages }}.
-        </span>
-
-        {% if data.has_next %}
-            <a href="?page={{ data.next_page_number }}">next</a>
-            <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-
-</body> 
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% load static %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="icon" href="{% static 'imgs/logo_icon.svg' %}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
 
-    <link rel="stylesheet" href="{% static 'styles/../../../static/../../static/styles/reset.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'styles/reset.css' %}">
     <link rel="stylesheet" href="{% static 'styles/index.css' %}">
 
-    <title>Document</title>
+
+    <title>Новини</title>
 </head>
 <body>
-    {% include 'site_main/nav-bar.html' %}
+    <nav class="nav-bar">
+        <div class="logo">
+            <a href="{% url 'main' %}"><img src="{%  static 'imgs/logo2.svg' %}" class="logo" style="margin-right: 10px; height: 65px; fill: #323232;"></a>
+{#                <img src="{%  static 'imgs/logo_text.svg' %}" class="logo" >#}
+        </div>
+
+    {% if filter == 0 %}
+    <div id="source-filter" class="filter-container">
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="tsn">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/tsn.jpg' %}" alt="TSN">
+            </span>
+            <span class="filter-label">TSN</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="unian">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/unian.png' %}" alt="Unian">
+            </span>
+            <span class="filter-label">Unian</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="radio_svoboda">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/radio_svoboda.jpeg' %}" alt="Радіо Свобода">
+            </span>
+            <span class="filter-label">Радіо свобода</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="ukrinform">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/ukrinform.webp' %}" alt="Радіо Свобода">
+            </span>
+            <span class="filter-label">Укрінформ</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="interfax">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/interfax.webp' %}" alt="Радіо Свобода">
+            </span>
+            <span class="filter-label">Інтерфакс</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="radio_svoboda">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/syspilne.png' %}" alt="Радіо Свобода">
+            </span>
+            <span class="filter-label">Суспільне новини</span>
+        </label>
+        <label class="filter-option">
+            <input type="checkbox" class="source-checkbox" value="radio_svoboda">
+            <span class="filter-icon">
+                <img src="{% static 'imgs/rbk_ukr.jpg' %}" alt="Радіо Свобода">
+            </span>
+            <span class="filter-label">РБК-Україна</span>
+        </label>
+    </div>
+
+    {% else %}
+        {{ filter|safe }}
+    {% endif %}
+    </nav>
+
+    <div class="search">
+
+        <input type="text" id="searchInput" placeholder="Пошук статей..." class="search-field" value="{{query_user}}">
+
+        <button onclick="performSearch()"
+                style="padding: 10px 10px 10px 15px; color: black; margin-left: -100px; background: transparent; border: none; border-radius: 5px; cursor: pointer; font-size: 20px; font-weight: 600;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+                <button onclick="clearSearch()"
+                style="padding: 10px 15px 10px 10px; background: transparent; color: black; border: none; font-weight: 600; cursor: pointer; font-size: 23px;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
 
     <div class="articles">
-{% for cluster in clusters %}
-    <div class="article-card">
-        <div class="article-img">
-            {% if cluster.articles_count >= 2 and cluster.articles_count <= 4 %}
-                {% for article in cluster.articles %}
-                    <img src="{{ article.img_url }}" alt="" class="card-img-cluster-type" loading="lazy">
-                {% endfor %}
-            {% elif cluster.articles_count > 4 %}
-                todo
-            {% elif cluster.articles_count == 1 %}
-                <img src="{{ cluster.first_article.img_url }}" alt="" class="card-img" loading="lazy">
-            {% endif %}
-        </div>
+        {% include 'site_main/clusters.html' with clusters=clusters %}
+    </div>
 
-        <div class="article-title-card">
-            <a href="{% url 'article' article_id=cluster.first_article.id %}" class="article-link">
-                <p class="article-title">{{ cluster.first_article.title }}</p>
-            </a>
-        </div>
-        <div class="article-date-card">
-            <p class="article-date">{{ cluster.first_article.date }}</p>
-            <p>{{ cluster.first_article.source }}</p>
-        </div>
-    </div>
-{% endfor %}
-    </div>
+    <script src="{% static 'js/index.js' %}"></script>
 
     <div class="pagination">
-        <span class="step-links">
-            {% if clusters.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ clusters.previous_page_number }}">previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ clusters.number }} of {{ clusters.paginator.num_pages }}.
-            </span>
-
-            {% if clusters.has_next %}
-                <a href="?page={{ clusters.next_page_number }}">next</a>
-                <a href="?page={{ clusters.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
+        {% include 'site_main/paginator.html' with clusters=clusters %}
     </div>
+
+    <script>
+        function load_image_async() {
+        const images = document.querySelectorAll('.card-img');
+
+        images.forEach(function(img) {
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+            }
+        });
+        }
+    </script>
+
+
+    <script defer>
+    window.addEventListener('load', function() {
+        load_image_async();
+      });
+    </script>
+
+<script>
+    function getFilterHtml() {
+    const clone = $('#source-filter').clone(); // Клонуємо форму
+
+    // Оновлюємо стани полів
+    clone.find('input, select, textarea').each(function () {
+        if ($(this).is(':checkbox, :radio')) {
+            $(this).attr('checked', $(this).prop('checked') ? 'checked' : null);
+        } else if ($(this).is('input, textarea')) {
+            $(this).attr('value', $(this).val());
+        } else if ($(this).is('select')) {
+            $(this).find('option').each(function () {
+                $(this).attr('selected', $(this).is(':selected') ? 'selected' : null);
+            });
+        }
+    });
+
+    return clone.prop('outerHTML'); // Отримуємо HTML-код форми
+}
+
+    $(document).ready(function () {
+        $('.source-checkbox').change(function () {
+            // Отримуємо всі обрані джерела
+            const selectedSources = $('.source-checkbox:checked').map(function () {
+                return this.value;
+            }).get();
+
+            const url = new URL(window.location);
+
+            url.searchParams.set('page', 1);
+
+            window.history.pushState({}, '', url);
+
+            $.ajax({
+                url: "{% url 'filter_news' %}",
+                type: "POST",
+                data: {
+                    'sources': selectedSources,
+                    'filter_source': getFilterHtml(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    $('.articles').html(response.articles);
+                    $('.pagination').html(response.paginator);
+                    load_image_async();
+                    SwiperUpload();
+                },
+                error: function () {
+                    alert('Помилка завантаження новин');
+                }
+            });
+        });
+    });
+    function clearSearch() {
+
+    const url = new URL(window.location);
+
+    url.searchParams.set('page', 1);
+    $('#searchInput').val('');
+
+    window.history.pushState({}, '', url);
+    $.ajax({
+        url: "{% url 'search_news' %}",
+        type: "POST",
+        data: {
+            'query': '1111',
+            'clear_query': 1,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function (response) {
+            console.log(response)
+            $('.articles').html(response.articles);
+            $('.pagination').html(response.paginator);
+            SwiperUpload();
+            load_image_async();
+        },
+        error: function () {
+            alert('Помилка завантаження новин');
+        }
+    });
+    }
+
+    function performSearch() {
+    const query = document.getElementById("searchInput").value;
+
+    const url = new URL(window.location);
+
+    url.searchParams.set('page', 1);
+
+    window.history.pushState({}, '', url);
+    console.log(query)
+    $.ajax({
+        url: "{% url 'search_news' %}",
+        type: "POST",
+        data: {
+            'query': query,
+            'clear_query': 0,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function (response) {
+            console.log(response)
+            $('.articles').html(response.articles);
+            $('.pagination').html(response.paginator);
+            SwiperUpload();
+            load_image_async();
+        },
+        error: function () {
+            alert('Помилка завантаження новин');
+        }
+    });
+    }
+</script>
 </body>
 </html>

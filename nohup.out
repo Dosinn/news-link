@@ -1,0 +1,60 @@
+ 
+ -------------- celery@ip-172-31-18-212 v5.4.0 (opalescent)
+--- ***** ----- 
+-- ******* ---- Linux-6.8.0-1018-aws-x86_64-with-glibc2.39 2025-01-10 01:42:04
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         JASU:0x714e6e0e0ad0
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     redis://localhost:6379/0
+- *** --- * --- .> concurrency: 1 (thread)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . clustering.tasks.parse_and_update_clusters_task
+
+[2025-01-10 01:42:04,274: WARNING/MainProcess] /home/ubuntu/news-link/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-01-10 01:42:04,379: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2025-01-10 01:42:04,379: WARNING/MainProcess] /home/ubuntu/news-link/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-01-10 01:42:04,381: INFO/MainProcess] mingle: searching for neighbors
+[2025-01-10 01:42:05,391: INFO/MainProcess] mingle: all alone
+[2025-01-10 01:42:05,404: INFO/MainProcess] celery@ip-172-31-18-212 ready.
+[2025-01-10 01:42:05,412: INFO/MainProcess] Task clustering.tasks.parse_and_update_clusters_task[6e3e6540-1845-4328-a085-64eb494805cf] received
+[2025-01-10 01:42:05,413: WARNING/MainProcess] ...Запуск парсингу...
+[2025-01-10 01:42:05,414: INFO/MainProcess] Task clustering.tasks.parse_and_update_clusters_task[3c15fa9d-a8f4-472c-8fa0-b32f24d9f6da] received
+[2025-01-10 01:42:05,422: INFO/MainProcess] Task clustering.tasks.parse_and_update_clusters_task[299dc60b-c50e-4703-a9ae-0e6f713c0804] received
+[2025-01-10 01:42:05,424: INFO/MainProcess] Task clustering.tasks.parse_and_update_clusters_task[4ea56307-be08-40af-8502-5393f1264b85] received
+[2025-01-10 01:42:05,428: INFO/MainProcess] Task clustering.tasks.parse_and_update_clusters_task[389b1f61-b657-4c53-89c0-f95a27153b9a] received
+[2025-01-10 01:42:05,909: WARNING/MainProcess] Parsing all tsn page-1:   0%|          | 0/24 [00:00<?, ?it/s]
+[2025-01-10 01:42:05,910: WARNING/MainProcess] TSN ERROR - 'NoneType' object is not subscriptable
+[2025-01-10 01:42:05,912: WARNING/MainProcess] Parsing all tsn page-1: 100%|##########| 24/24 [00:00<00:00, 9517.19it/s]
+[2025-01-10 01:42:06,479: WARNING/MainProcess] Parsing all unian:   0%|          | 0/20 [00:00<?, ?it/s]
+[2025-01-10 01:42:06,481: WARNING/MainProcess] Parsing all unian: 100%|##########| 20/20 [00:00<00:00, 14711.69it/s]
+[2025-01-10 01:42:06,652: WARNING/MainProcess] Parsing all radio_svoboda:   0%|          | 0/29 [00:00<?, ?it/s]
+[2025-01-10 01:42:06,657: WARNING/MainProcess] Parsing all radio_svoboda: 100%|##########| 29/29 [00:00<00:00, 5432.31it/s]
+[2025-01-10 01:42:16,464: WARNING/MainProcess] Додано нових статей: 73
+[2025-01-10 01:42:16,464: WARNING/MainProcess] Оновлення кластерів...
+[2025-01-10 01:42:34,302: WARNING/MainProcess] Додано статтю 'Курс гривні вп’яте у 2025 році оновив історичний мінімум щодо долара' до кластера 2203 зі схожістю 0.98
+
+worker: Warm shutdown (MainProcess)
+
+worker: Warm shutdown (MainProcess)
+[2025-01-10 01:42:50,727: WARNING/MainProcess] Додано статтю 'Зеленський зустрівся з генсеком НАТО: про що говорили' до кластера 2207 зі схожістю 0.75
+[2025-01-10 01:42:55,061: WARNING/MainProcess] Додано статтю 'План Трампа щодо Гренландії може допомогти Путіну — Sky News' до кластера 2272 зі схожістю 0.87
+[2025-01-10 01:43:07,043: WARNING/MainProcess] Додано статтю 'Зустріч лідерів України та Італії: Зеленський розкрив подробиці розмови з Мелоні' до кластера 2207 зі схожістю 0.73
+[2025-01-10 01:43:10,133: WARNING/MainProcess] Додано статтю 'Зеленський повідомив, коли відбудеться наступне засідання “Рамштайну”' до кластера 2207 зі схожістю 0.72
+[2025-01-10 01:43:20,761: WARNING/MainProcess] Додано статтю 'Чи вистачить Україні лише європейських гарантій безпеки: Зеленський відповів' до кластера 2145 зі схожістю 0.80

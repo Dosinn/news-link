@@ -193,13 +193,22 @@
         /* Контейнер для фільтрів */
 .filter-container {
     display: flex;
+    flex-direction: row;
     gap: 20px;
     padding: 10px;
     background-color: transparent;
     border-radius: 10px;
     align-items: center;
     justify-content: center; /* Центрування фільтрів */
-        flex-grow: 1; /* Фільтри займають весь доступний простір */
+    flex-grow: 1; /* Фільтри займають весь доступний простір */
+    padding-bottom: -5px;
+
+    overflow-x: auto; /* ДОЗВОЛЯЄМО горизонтальну прокрутку */
+    overflow-y: hidden; /* Приховуємо вертикальну прокрутку, якщо вона випадково з'явиться */
+    /* white-space: nowrap;  -- Можна використати як альтернативу flex-shrink: 0 на дочірніх, але flex-shrink більш гнучкий */
+    -webkit-overflow-scrolling: touch; /* Покращує скрол на iOS */
+    width: 85vw ; /* Займаємо всю доступну ширину батьківського елемента */
+    box-sizing: border-box; /* Включаємо padding у загальну ширину елемента */
 }
 
 /* Кожен пункт фільтра */
@@ -213,6 +222,18 @@
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        flex-shrink: 0; /* *** ВАЖЛИВО: Забороняє елементам зменшуватися. *** */
+                      /* Саме це змусить їх виходити за межі контейнера і створить скрол */
+}
+
+.filter-container::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 /* Ефекти при наведенні */
@@ -244,6 +265,34 @@
     font-family: Arial, sans-serif;
     color: #333;
 }
+.filterSwiper {
+    overflow: hidden; /* Запобігає горизонтальному скролінгу */
+    /*overflow: hidden; !* Запобігає горизонтальному скролінгу *!*/
+    /*padding: 0 10px; !* Додає відступи для запобігання обрізанню *!*/
+    box-sizing: border-box;
+    width: fit-content !important;
+}
+
+.swiper-wrapper-1 {
+    z-index: 11;
+    display: flex;
+    justify-content: space-between; /* Розподілити слайди рівномірно */
+    align-items: center; /* Вирівнювання по вертикалі */
+    width: auto;
+    max-width: 90vw;
+    gap: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box; /* Враховує padding у ширині */
+}
+
+.swiper-slide-1 {
+    width: auto !important;
+    box-sizing: border-box;
+}
+.swiper-slide-1:last-child {
+    padding-right: 45px;
+}
+
 .article-source-href {
     text-decoration: none;
     color: black;
@@ -313,6 +362,25 @@
   color: #999;
   font-size: 15px;
 }
+.search-field {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-right: 1vw;
+}
+.no-one-finned {
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 20vh;
+}
+.search {
+    width: 100%;
+    display: -webkit-flex;
+    justify-content: center;
+    margin-top: 4vh;
+}
 @media (max-width: 768px) {
     .nav-bar {
         flex-direction: column; /* Логотип і фільтри стають вертикальними */
@@ -322,9 +390,16 @@
     }
 
     .filter-container {
-        margin-top: 15px; /* Відступи між логотипом і фільтрами */
+        margin-top: 10px; /* Відступи між логотипом і фільтрами */
         justify-content: center; /* Центруємо фільтри */
         position: sticky;
+    }
+    .filter-option {
+        transition: box-shadow 0.2s;
+    }
+    .filter-option:hover {
+        transform: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
     .logo {
@@ -338,4 +413,15 @@
     .swiper-button-next {
       display: none;
     }
+    .article-title {
+        margin: 1vw !important;
+    }
+    .article-date-card {
+        margin: 1vw !important;
+        width: calc(100% - 2vw);
+    }
+    .search-field {
+        width: 50vw;
+    }
+    .sub
 }

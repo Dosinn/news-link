@@ -1,4 +1,5 @@
 {% load static %}
+{% load tz %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,39 +7,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ article_content.title }}</title>
+    <link rel="icon" href="{% static 'imgs/logo_icon.svg' %}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link rel="stylesheet" href="{% static 'styles/reset.css' %}">
     <link rel="stylesheet" href="{% static 'styles/new_page.css' %}">
 
 </head>
 <body>
-    {% include 'site_main/nav-bar.html' %}
+    <nav class="nav-bar">
+        <div class="back-arrow">
+            <a href="#" onclick="window.history.back(); return false;" class="back">
+                <i class="fa-solid fa-angle-left"></i>
+            </a>
+        </div>
+        <div class="logo">
+            <img src="{%  static 'imgs/logo2.svg' %}" class="logo">
+{#                <img src="{%  static 'imgs/logo_text.svg' %}" class="logo" >#}
+
+        </div>
+    </nav>
 
     <main class="main-content">
+
         <div class="new-main">
             <h2 class="new-title">{{ article_content.title }}</h2>
             <p class="date-info">Дата публікації: {{ article_content.date }}</p>
 
-            <div class="arcitle-content">
+            <div class="article-content">
                 <img src="{{ article_content.main_img.src }}" alt="" class="new-img" loading="lazy">
                 <p class="img-sign">{{ article_content.main_img.sign }}</p>
                 <p class="new-text"></p>
                 {{ article_content.content|safe }}
             </div>
         </div>
+        <style>
+            :root {
+  --star-size: 50px;
+  --star-color: #fff;
+  --star-background: #fc0;
+}
 
+.Stars {
+  --percent: calc(var(--rating) / 5 * 100%);
+
+  font-size: var(--star-size);
+  font-family: Times; // make sure ★ appears correctly
+  line-height: 1;
+
+    margin-top: 10px;
+
+    cursor: pointer;
+
+  &::before {
+    content: '★★★★★';
+    letter-spacing: 3px;
+      -webkit-text-stroke-color: black;
+      -webkit-text-stroke-width: 0.5px;
+    background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+        </style>
+
+        <div class="right-side">
         <div class="new-source-info">
-            <h2 class="new-title">Джерело:</h2>
-            <div class="source-info">
-                <img src="https://tsn.ua/static/pub/img/logo-sm.svg?v=d88" alt="" class="source-logo">
-                <a href='https://tsn.ua' class="source-link">https://tsn.ua</a>
+            <div class="source-box">
+                <div class="wrap-source">
+                <img src="{% static article_content.source_img %}" alt="" class="source-img">
+                <a href="{{ article_content.source_link }}" target="_blank" class="source-a">
+                    <h2 class="source-title">{{ article_content.source_title }}</h2>
+                </a>
+                </div>
+            <div class="st-box"><div class="Stars" style="--rating: {{ source_rat }};"></div></div>
+            </div>
+            <div class="article-view-box">
+                <h2 class="view-article-text">Переглянути статтю:</h2>
+                <a href="{{ article_content.article_link }}" target="_blank">
+                    <p class="article-link-text">{{ article_content.article_link }}</p>
+                </a>
+            </div>
+            <div class="author-box">
+                <h2 class="author-text"><strong>Автор:</strong> {{ article_content.author }}</h2>
             </div>
         </div>
+        {% if articles_in_cluster|length > 0 %}
+        <div class="other-news">
+            <h1 class="other-text-title">Схожі новини</h1>
+            {% for other_article in articles_in_cluster %}
+                <div class="other-elem">
+                    <a href="{% url 'article' article_slug=other_article.slug %}" class="other-link"><p class="other-text">{{ other_article.title }}</p></a>
+                    <div class="date-source">
+                        {% timezone "Europe/Kiev" %}
+                            <time datetime="{{other_article.date}}" class="date">{{ other_article.date|date:"H:i, d.m.Y" }}</time>
+                        {% endtimezone %}
+                        {% if other_article.source == 'tsn' %}
+                            <a href="https://tsn.ua/" class="article-source-href" target="_blank"><p class="article-source">ТСН</p></a>
+                        {% elif other_article.source == 'unian' %}
+                            <a href="https://www.unian.ua/" class="article-source-href" target="_blank"><p class="article-source">Уніан</p></a>
+                        {% elif other_article.source == 'radio_svoboda' %}
+                            <a href="https://www.radiosvoboda.org/" class="article-source-href" target="_blank"><p class="article-source">Радіо Свобода</p></a>
+                        {% elif other_article.source == 'ukrinform' %}
+                            <a href="https://www.ukrinform.ua/" class="article-source-href" target="_blank"><p class="article-source">Укрінформ</p></a>
+                        {% elif other_article.source == 'interfax' %}
+                            <a href="https://interfax.com.ua/" class="article-source-href" target="_blank"><p class="article-source">Інтерфакс</p></a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+            {% endif %}
+            </div>
+
     </main>
 
+    <script>
+        starsElement = document.querySelector('.Stars')
+        starsElement.addEventListener('click', (event) => {
+            rect = starsElement.getBoundingClientRect()
+            offsetX = event.clientX - rect.left
+
+    let clickedRating = Math.floor((offsetX / rect.width) * 5) + 1;
+    console.log(clickedRating)
+
+            $.ajax({
+                url: "{% url 'rating' %}",
+                type: "POST",
+                data: {
+                    'source': '{{ article_content.source_title }}',
+                    'rating_post': clickedRating,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    $('.st-box').html(response.rating_n);
+
+
+                },
+                error: function () {
+                    alert('Помилка завантаження новин');
+                }
+            });
+});
+    </script>
 
 </body>
 </html>

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import certifi
 
 # Build map_paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +26,13 @@ SECRET_KEY = 'django-insecure-e5*zj-dvh%et&-5slhpf2$qn%=3&x1uti_+9nfv*!as3qyn!t)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.101', 'localhost', 'news-link.cx.ua', '176.117.167.156']
-
+ALLOWED_HOSTS = ['13.53.155.192', 'news-link.cx.ua', '13-53-155-192.sslip.io']
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    '13.53.155.192'
+    # ...
+]
 
 # Application definition
 
@@ -48,14 +54,14 @@ INSTALLED_APPS = [
     'tqdm',
     'site_main.article_preprocess',
     'pymongo',
-    'djongo',
-    'psycopg2',
     'torch',
     'sentence_transformers',# 'site_main.parserr'б
-    'channels',
     'django_redis',
     'pytz',
-    'spacy'
+    'bson',
+    'rapidfuzz',
+    'mongoengine',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -66,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'JASU.urls'
@@ -106,17 +113,26 @@ WSGI_APPLICATION = 'JASU.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'CLIENT': {
-            'host': 'mongodb+srv://dosi:hGUu7HixfbVFYdEU@cluster0.kyhro.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', # Replace with your MongoDB server address
-            'port': 27017,               # Replace with your MongoDB port if different
-            'username': 'dosi', # Replace with your MongoDB username (optional)
-            'password': 'hGUu7HixfbVFYdEU', # Replace with your MongoDB password (optional)
-            'authSource': 'admin', # Replace with your MongoDB authentication database (optional)
-        },
-        'NAME': 'NewsLink',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'CLIENT': {
+#             'host': 'mongodb+srv://dosi:hGUu7HixfbVFYdEU@cluster0.kyhro.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', # Replace with your MongoDB server address
+#             'port': 27017,               # Replace with your MongoDB port if different
+#             'username': 'dosi', # Replace with your MongoDB username (optional)
+#             'password': 'hGUu7HixfbVFYdEU', # Replace with your MongoDB password (optional)
+#             'authSource': 'admin', # Replace with your MongoDB authentication database (optional
+# 	   'tls': True,
+# 	  'tlsCAFile': certifi.where(),
+#         },
+#         'NAME': 'NewsLink',
+#     }
+# }
 
 
 # Password validation
@@ -169,16 +185,9 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-from celery.schedules import crontab
 
-CELERY_BEAT_SCHEDULE = {
-    'parse-and-cluster-every-10-minutes': {
-        'task': 'clustering.tasks.parse_and_update_clusters_task',
-        'schedule': crontab(minute='*/1'),  # Кожні 10 хвилин
-    },
-}
-
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'main'
+LOGOUT_REDIRECT_URL = 'main'
 
 
 CACHES = {

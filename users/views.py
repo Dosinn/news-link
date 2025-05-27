@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 
 from users.forms import LoginUserForm, RegisterUserForm
@@ -30,7 +30,7 @@ class LoginUser(LoginView):
 
 def logout_user(request):
     logout(request)
-    return HttpResponse(reverse('users:login'))
+    return redirect(reverse_lazy('main'))
 
 
 def register(request):

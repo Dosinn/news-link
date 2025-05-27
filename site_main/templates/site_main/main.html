@@ -1,0 +1,283 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="icon" href="{% static 'imgs/logo_icon.svg' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'styles/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+
+
+    <title>Головна сторінка</title>
+</head>
+<body>
+
+<style>
+    .swiper-slide {
+height: auto !important;
+}
+    .swiper-wrapper {
+    display: flex; /* Важливо! Swiper зазвичай це робить */
+    align-items: stretch; /* *** Дуже важливо! *** Це змушує flex-елементи (.swiper-slide) розтягуватися по висоті найвищого. */
+    /* ... інші стилі Swiper wrapper ... */
+}
+    .article-card {
+        height: 100% !important;
+    }
+</style>
+    <nav class="nav-bar">
+        <div class="logo">
+            <a href="{% url 'main' %}"><img src="{%  static 'imgs/logo2.svg' %}" class="logo" style="margin-right: 10px; height: 65px; fill: #323232;"></a>
+{#                <img src="{%  static 'imgs/logo_text.svg' %}" class="logo" >#}
+        </div>
+
+    <div class="search">
+        <input type="text" id="searchInput" placeholder="Пошук статей..." class="search-field">
+        <button onclick="performSearch()"
+                style="padding: 10px 15px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 20px;">
+            Пошук
+        </button>
+        <div class="btn-sector">
+            <a class="nav-btn" href="{% url 'news' %}">Всі новини</a>
+           {% if user.is_authenticated %}
+                <a class="nav-btn" href="{% url 'users:logout' %}"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+            {% else %}
+                <a class="nav-btn" href="{% url 'users:login' %}"><i class="fa-solid fa-user"></i></a>
+            {%endif%}
+        </div>
+    </div>
+
+    </nav>
+
+
+<!--    <main class="main-view">-->
+<!--        <div class="col-view">-->
+<!--            <div class="for-you-news hor">-->
+<!--                <h1 class="label">Для вас</h1>-->
+<!--                <div class="cards r">-->
+<!--                    {% include 'site_main/clusters.html' with clusters=clusters_for_user %}-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="best-news-today hor">-->
+<!--                <h1 class="label">Найважливіше за сьогодні</h1>-->
+<!--                <div class="cards r">-->
+<!--                   {% include 'site_main/clusters.html' with clusters=clusters_best_today %}-->
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="ver-view">-->
+<!--            <div class="new-articles">-->
+<!--                <h1 class="label center">Останні новини</h1>-->
+<!--                <div class="cards ver">-->
+<!--                    {% include 'site_main/clusters.html' with clusters=clusters_new %}-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </main>-->
+
+    <main class="main-view">
+    <div class="col-view">
+
+        <div class="for-you-news hor">
+            <h1 class="label">Для вас</h1>
+            <div class="swiper for-you-swiper">
+                <div class="swiper-wrapper">
+                    {# 'clusters.html' тепер генерує 'swiper-slide' елементи #}
+                    {% include 'site_main/clusters1.html' with clusters=clusters_for_user %}
+                </div>
+                <div class="swiper-pagination for-you-pagination"></div>
+                <div class="swiper-button-prev for-you-prev"></div>
+                <div class="swiper-button-next for-you-next"></div>
+            </div>
+        </div>
+
+        <div class="best-news-today hor">
+            <h1 class="label">Найважливіше за сьогодні</h1>
+            <div class="swiper best-today-swiper"> <div class="swiper-wrapper">
+                    {# 'clusters.html' тепер генерує 'swiper-slide' елементи #}
+                    {% include 'site_main/clusters1.html' with clusters=clusters_best_today %}
+                </div>
+                <div class="swiper-pagination best-today-pagination"></div>
+                <div class="swiper-button-prev best-today-prev"></div>
+                <div class="swiper-button-next best-today-next"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="ver-view">
+        <div class="new-articles">
+            <h1 class="label center">Останні новини</h1>
+            <div class="cards ver">
+                {% include 'site_main/clusters.html' with clusters=clusters_new %} {# Якщо тут теж потрібен слайдер, зробіть аналогічно #}
+            </div>
+        </div>
+    </div>
+</main>
+    <script src="{% static 'js/index.js' %}"></script>
+
+    <div class="pagination">
+        {% include 'site_main/paginator.html' with clusters=clusters %}
+    </div>
+    
+        <script defer>
+    window.addEventListener('load', function() {
+        const images = document.querySelectorAll('.card-img');
+
+        images.forEach(function(img) {
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+            }
+        });
+        // Переконайтеся, що цей код виконується після завантаження DOM
+
+      });
+    </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+    // Ініціалізація слайдера для секції "Для вас"
+    const forYouSwiper = new Swiper('.for-you-swiper', {
+        // Налаштування для for-you-swiper
+        // Наприклад, скільки слайдів показувати одночасно:
+        slidesPerView: 3.5, // Або 'auto', або інше число
+
+        // Пагінація (якщо використовується)
+
+        // Кнопки навігації (якщо використовуються)
+        navigation: {
+            nextEl: '.for-you-swiper .swiper-button-next.for-you-next', // Більш точний селектор
+            prevEl: '.for-you-swiper .swiper-button-prev.for-you-prev', // Більш точний селектор
+        },
+
+        // Ви можете додати більше опцій, наприклад:
+        // loop: true, // якщо хочете нескінченну прокрутку
+        // breakpoints: { // Адаптивність
+        //    // При ширині екрану >= 640px
+        //    640: {
+        //      slidesPerView: 2,
+        //      spaceBetween: 20
+        //    },
+        //    // При ширині екрану >= 768px
+        //    768: {
+        //      slidesPerView: 3,
+        //      spaceBetween: 30
+        //    }
+        // }
+    });
+
+    // Ініціалізація слайдера для секції "Найважливіше за сьогодні"
+    const bestTodaySwiper = new Swiper('.best-today-swiper', {
+        // Налаштування для best-today-swiper
+        slidesPerView: 3.5,
+
+        // Пагінація (якщо використовується)
+
+        // Кнопки навігації (якщо використовуються)
+        navigation: {
+            nextEl: '.best-today-swiper .swiper-button-next.best-today-next', // Більш точний селектор
+            prevEl: '.best-today-swiper .swiper-button-prev.best-today-prev', // Більш точний селектор
+        },
+
+        // Так само можна додати інші опції та breakpoints
+    });
+
+    // Якщо у вас є ще ваш оригінальний слайдер .mySwiper, його ініціалізація залишається
+    // const mySwiper = new Swiper('.mySwiper', { ... });
+});
+
+    function getFilterHtml() {
+    const clone = $('#source-filter').clone(); // Клонуємо форму
+
+    // Оновлюємо стани полів
+    clone.find('input, select, textarea').each(function () {
+        if ($(this).is(':checkbox, :radio')) {
+            $(this).attr('checked', $(this).prop('checked') ? 'checked' : null);
+        } else if ($(this).is('input, textarea')) {
+            $(this).attr('value', $(this).val());
+        } else if ($(this).is('select')) {
+            $(this).find('option').each(function () {
+                $(this).attr('selected', $(this).is(':selected') ? 'selected' : null);
+            });
+        }
+    });
+
+    return clone.prop('outerHTML'); // Отримуємо HTML-код форми
+}
+
+    $(document).ready(function () {
+        $('.source-checkbox').change(function () {
+            // Отримуємо всі обрані джерела
+            const selectedSources = $('.source-checkbox:checked').map(function () {
+                return this.value;
+            }).get();
+
+            const url = new URL(window.location);
+
+            url.searchParams.set('page', 1);
+
+            window.history.pushState({}, '', url);
+
+            $.ajax({
+                url: "{% url 'filter_news' %}",
+                type: "POST",
+                data: {
+                    'sources': selectedSources,
+                    'filter_source': getFilterHtml(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    $('.articles').html(response.articles);
+                    $('.pagination').html(response.paginator);
+                    SwiperUpload();
+                },
+                error: function () {
+                    alert('Помилка завантаження новин');
+                }
+            });
+        });
+    });
+
+    function performSearch() {
+    const query = document.getElementById("searchInput").value;
+
+    const url = new URL(window.location);
+
+    url.searchParams.set('page', 1);
+
+    window.history.pushState({}, '', url);
+    console.log(query)
+    $.ajax({
+        url: "{% url 'search_news' %}",
+        type: "POST",
+        data: {
+            'query': query,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function (response) {
+            console.log(response)
+            $('.articles').html(response.articles);
+            $('.pagination').html(response.paginator);
+            SwiperUpload();
+        },
+        error: function () {
+            alert('Помилка завантаження новин');
+        }
+    });
+    }
+</script>
+</body>
+</html>

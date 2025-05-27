@@ -12,9 +12,9 @@ class LoginUserForm(AuthenticationForm):
     }
 
     username = forms.CharField(label='Логін',
-                               widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Username'}))
+                               widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Логін'}))
     password = forms.CharField(label='Пароль',
-                               widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'pass'}))
+                               widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Пароль'}))
 
     class Meta:
         model = get_user_model()

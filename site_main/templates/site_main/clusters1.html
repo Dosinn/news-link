@@ -1,0 +1,89 @@
+{% load static %}
+{% load tz %}
+{% for cluster in clusters %}
+  {% if cluster.num_articles > 1 %}
+    <div class="swiper-slide">
+    <div class="article-card">
+      <div class="swiper mySwiper">
+
+        <div class="swiper-wrapper">
+          {% for article in cluster.articles %}
+          <div class="swiper-slide">
+            <div class="article-img">
+              <img src="{{ article.img_url }}" alt="" class="card-img" loading="lazy">
+            </div>
+            <div class="article-title-card">
+                <a href="{% url 'article' article_slug=article.slug %}" class="article-link">
+                    <p class="article-title">{{ article.title }}</p>
+                </a>
+            </div>
+              <div class="parent-container">
+                <div class="article-date-card">
+                    {% timezone "Europe/Kiev" %}
+                      <p class="article-date">{{ article.date|date:"H:i, d.m.Y" }}</p>
+                    {% endtimezone %}
+                    {% if article.source == 'tsn' %}
+                        <a href="https://tsn.ua/" class="article-source-href" target="_blank"><p class="article-source">ТСН</p></a>
+                    {% elif article.source == 'unian' %}
+                        <a href="https://www.unian.ua/" class="article-source-href" target="_blank"><p class="article-source">Уніан</p></a>
+                    {% elif article.source == 'radio_svoboda' %}
+                        <a href="https://www.radiosvoboda.org/" class="article-source-href" target="_blank"><p class="article-source">Радіо Свобода</p></a>
+                    {% elif article.source == 'ukrinform' %}
+                        <a href="https://www.ukrinform.ua/" class="article-source-href" target="_blank"><p class="article-source">Укрінформ</p></a>
+                    {% elif article.source == 'interfax' %}
+                        <a href="https://interfax.com.ua/" class="article-source-href" target="_blank"><p class="article-source">Інтерфакс</p></a>
+                    {% endif %}
+                  <p>Перегляди: {{ article.views }}</p>
+                </div>
+              </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="slider-control">
+            <div class="swiper-pagination"></div>
+
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+
+      </div>
+    </div>
+    </div>
+
+  {% else %}
+    {% with cluster.articles|first as first_article %}
+    <div class="swiper-slide">
+            <div class="article-card">
+      <div class="article-img">
+          <img data-src="{{ first_article.img_url }}" alt="" class="card-img" loading="lazy" style="    background-color: #ccc; /* Сірий фон */">
+      </div>
+      <div class="article-title-card">
+        <a href="{% url 'article' article_slug=first_article.slug %}" class="article-link">
+          <p class="article-title">{{ first_article.title }}</p>
+        </a>
+      </div>
+      <div class="article-date-card">
+        {% timezone "Europe/Kiev" %}
+          <p class="article-date">{{ first_article.date|date:"H:i, d.m.Y" }}</p>
+        {% endtimezone %}
+        {% if first_article.source == 'tsn' %}
+            <a href="https://tsn.ua/" class="article-source-href"><p class="article-source">ТСН</p></a>
+        {% elif first_article.source == 'unian' %}
+            <a href="https://www.unian.ua/" class="article-source-href"><p class="article-source">Уніан</p></a>
+        {% elif first_article.source == 'radio_svoboda' %}
+            <a href="https://www.radiosvoboda.org/" class="article-source-href"><p class="article-source">Радіо Свобода</p></a>
+        {% elif first_article.source == 'ukrinform' %}
+            <a href="https://www.ukrinform.ua/" class="article-source-href" target="_blank"><p class="article-source">Укрінформ</p></a>
+          {% elif first_article.source == 'interfax' %}
+            <a href="https://interfax.com.ua/" class="article-source-href" target="_blank"><p class="article-source">Інтерфакс</p></a>
+        {% endif %}
+        <p>Перегляди: {{ first_article.views }}</p>
+      </div>
+    </div>
+    </div>
+    {% endwith %}
+  {% endif %}
+
+{% endfor %}
+

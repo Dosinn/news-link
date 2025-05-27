@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import cloudscraper
 import markdownify
 import requests
+import re
 
 
 def tsn_preprocess(url):
@@ -12,11 +13,11 @@ def tsn_preprocess(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
 
-    title = soup.find('h1', class_='c-card__title').text
-    date = soup.find('time').text
-    src = soup.find('picture').find('source')['srcset']
+    title = soup.find('h1', class_='c-entry__title c-title c-title--h1 font-bold').text
+    date = soup.find('time', class_='text-current c-bar__link c-entry__time').text
+    src = soup.find('div', class_='c-figure__embed u-cover').find('img')['src']
     try:
-        sign = soup.find('div', class_='c-card__media__caption i-before i-info').text
+        sign = soup.find('figcaption', class_='l-container').text
     except AttributeError:
         pass
 
@@ -24,15 +25,14 @@ def tsn_preprocess(url):
     try:
         lead = soup.new_tag('h2', attrs={
             'class': 'lead-text'})
-        lead.string = soup.find('div', class_='c-article__body').find('div', class_='c-article__lead').text
+        lead.string = soup.find('div', class_='c-entry__lead c-prose__lead').find('p').text
         content.append(lead)
     except Exception as ex:
         print(ex)
 
-    content1 = soup.find('div', class_='c-article__body').findAll('div')[5]
-    if content1.text == '':
-        content1 = soup.find('div', class_='c-article__body').findAll('div')[6]
-    content.append(content1)
+    # content1 = soup.find('div', class_='c-prose c-post__inner').select('ul>li>p,p,h2,figure.c-prose__spacer')[2::]
+    content1 = soup.find('div', class_='c-prose c-post__inner').select('div.c-prose.c-post__inner > ul, div.c-prose.c-post__inner > ol, div.c-prose.c-post__inner > p, div.c-prose.c-post__inner > h2, div.c-prose.c-post__inner > h3, div.c-prose.c-post__inner > figure.c-prose__spacer')[1::]
+    content.extend(content1)
 
     for i in content.findAll('p'):
         i['class'] = 'new-text'
@@ -48,6 +48,8 @@ def tsn_preprocess(url):
         try:
             if i['class'][0] == 'lead-text':
                 continue
+            if i.text.strip() == 'Читайте також' or i.text.strip() == 'Пов’язані теми':
+                i.decompose()
         except:
             i['class'] = 'new-subtitles'
     for i in content.findAll('h3'):
@@ -61,44 +63,53 @@ def tsn_preprocess(url):
             i.decompose()
 
     try:
-        aside_node = content.findAll('aside', class_='c-article__note')
+        aside_node = content.findAll('aside', {'data': 'ad-container'})
         for i in aside_node:
             if i.find('h3', class_='new-subtitles').text == 'Також читайте':
                 i.decompose()
     except Exception as e:
         print(e)
 
-    for item, img in zip(content.findAll('div', class_='c-figure c-figure__row'),
-                         content.findAll('img', class_='c-card__embed__img')):
+    for item, img in zip(content.findAll('figure', class_='c-figure c-prose__spacer'),
+                         content.findAll('div', class_='c-figure__embed u-cover')):
 
         tag = soup.new_tag('div', attrs={'class': 'new-img-sub'})
 
-        new_tag = soup.new_tag('img', attrs={'src': img['data-src'], 'class': 'new-img-sub', 'loading': 'lazy'})
+        new_tag = soup.new_tag('img', attrs={'src': img.find('img')['src'], 'class': 'new-img-sub', 'loading': 'lazy'})
         tag.append(new_tag)
         try:
+            item.find_next('p').decompose()
             sing_tag = soup.new_tag('p', attrs={
                 'class': 'img-sign-sub'})
-            sing_tag.string = item.find('div', class_='c-card__media__caption i-before i-info').text
+            sing_tag.string = img.find('img')['alt']
+
             tag.append(sing_tag)
-        except AttributeError:
-            pass
+        except Exception as e:
+            print('ERRR', e)
 
         item.replace_with(tag)
 
-    if content.findAll('iframe'):
-        for item in content.findAll('iframe'):
-            tag = soup.new_tag('div', attrs={'class': 'article-iframe-video'})
-            video_tag = soup.new_tag('iframe', attrs={'src': item['data-src'], 'styles': 'width: 43vw; height: 24.2vw', 'loading':'lazy', 'allowfullscreen':''})
-            tag.append(video_tag)
-            item.replace_with(tag)
-    try:
-        twitter_content = soup.findAll('div', class_='c-figure c-figure__row c-figure__row--sdmd')
-        for tweet in twitter_content:
-            tweet['class'] = 'new-img-sub'
-    except AttributeError:
-        pass
+    # if content.findAll('iframe'):
+    #     for item in content.findAll('iframe'):
+    #         tag = soup.new_tag('div', attrs={'class': 'article-iframe-video'})
+    #         video_tag = soup.new_tag('iframe', attrs={'src': item['data-src'], 'styles': 'width: 43vw; height: 24.2vw', 'loading':'lazy', 'allowfullscreen':''})
+    #         tag.append(video_tag)
+    #         item.replace_with(tag)
+    # try:
+    #     twitter_content = soup.findAll('div', class_='c-figure c-figure__row c-figure__row--sdmd')
+    #     for tweet in twitter_content:
+    #         tweet['class'] = 'new-img-sub'
+    # except AttributeError:
+    #     pass
+
+    author = soup.find('dl', class_='c-entry__author').find('a', class_='text-current c-bar__link').text
 
     article_data = {
+        'source_link': 'https://tsn.ua',
+        'article_link': url,
+        'author': author,
+        'source_img': 'imgs/tsn.jpg',
+        'source_title': 'ТСН',
         'title': title,
         'date': date,
         'main_img': {'src': src, 'sign': sign},
@@ -187,7 +198,14 @@ def unian_preprocess(url):
 
         item.replace_with(tag)
 
+    author = soup.find('p', class_='article__author--bottom').text.strip()
+
     article_data = {
+        'source_link': 'https://unian.ua',
+        'author': author,
+        'article_link': url,
+        'source_img': 'imgs/unian.png',
+        'source_title': 'Уніан',
         'title': title,
         'date': date,
         'main_img': {'src': src, 'sign': sign},
@@ -197,6 +215,352 @@ def unian_preprocess(url):
     return article_data
 
 
+def radio_svoboda_preprocess(url):
+
+    url = url
+    sign = ''
+    try:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, "html.parser")
+    except:
+        url = f'https://www.radiosvoboda.org{url}'
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, "html.parser")
+
+    title = soup.find('h1', class_='title pg-title').text
+    date = soup.find('span', class_='date').text
+    src = soup.find('div', class_='cover-media').find('img')['src'].replace('_w250_r1_s', '_w1023_r1_s')
+    try:
+        sign = soup.find('div', class_='cover-media').find('span', class_='caption').text
+    except Exception as ex:
+        print('ERRRR', ex)
+
+    content = soup.new_tag('div', attrs={'class': 'article-content'})
+    # try:
+    #     lead = soup.new_tag('h2', attrs={
+    #         'class': 'lead-text'})
+    #     lead.string = soup.find('div', class_='c-entry__lead c-prose__lead').find('p').text
+    #     content.append(lead)
+    # except Exception as ex:
+    #     print(ex)
+
+    # content1 = soup.find('div', class_='c-prose c-post__inner').select('ul>li>p,p,h2,figure.c-prose__spacer')[2::]
+    content1 = soup.find('div', class_='wsw').select('div.wsw > ul, div.wsw > ol, div.wsw > p, div.wsw > h2, div.wsw > h3, div.wsw > figure.c-prose__spacer')
+    content.extend(content1)
+
+    for i in content.findAll('p'):
+        i['class'] = 'new-text'
+        if i.text.strip() == 'Читайте також:':
+            sibling = i.next_sibling
+            while sibling:
+                next_sibling = sibling.next_sibling
+                sibling.extract()
+                sibling = next_sibling
+            i.decompose()
+
+    for i in content.findAll('h2'):
+        try:
+            if i['class'][0] == 'lead-text':
+                continue
+            if i.text.strip() == 'Читайте також' or i.text.strip() == 'Пов’язані теми':
+                i.decompose()
+        except:
+            i['class'] = 'new-subtitles'
+    for i in content.findAll('h3'):
+        i['class'] = 'new-subtitles'
+        if i.text.strip() == 'Читайте також:':
+            sibling = i.next_sibling
+            while sibling:
+                next_sibling = sibling.next_sibling
+                sibling.extract()
+                sibling = next_sibling
+            i.decompose()
+
+    try:
+        aside_node = content.findAll('aside', {'data': 'ad-container'})
+        for i in aside_node:
+            if i.find('h3', class_='new-subtitles').text == 'Також читайте':
+                i.decompose()
+    except Exception as e:
+        print(e)
+
+    for item, img in zip(content.findAll('figure', class_='c-figure c-prose__spacer'),
+                         content.findAll('div', class_='c-figure__embed u-cover')):
+
+        tag = soup.new_tag('div', attrs={'class': 'new-img-sub'})
+
+        new_tag = soup.new_tag('img', attrs={'src': img.find('img')['src'], 'class': 'new-img-sub', 'loading': 'lazy'})
+        tag.append(new_tag)
+        try:
+            item.find_next('p').decompose()
+            sing_tag = soup.new_tag('p', attrs={
+                'class': 'img-sign-sub'})
+            sing_tag.string = img.find('img')['alt']
+
+            tag.append(sing_tag)
+        except Exception as e:
+            print('ERRR', e)
+
+        item.replace_with(tag)
+
+    # if content.findAll('iframe'):
+    #     for item in content.findAll('iframe'):
+    #         tag = soup.new_tag('div', attrs={'class': 'article-iframe-video'})
+    #         video_tag = soup.new_tag('iframe', attrs={'src': item['data-src'], 'styles': 'width: 43vw; height: 24.2vw', 'loading':'lazy', 'allowfullscreen':''})
+    #         tag.append(video_tag)
+    #         item.replace_with(tag)
+    # try:
+    #     twitter_content = soup.findAll('div', class_='c-figure c-figure__row c-figure__row--sdmd')
+    #     for tweet in twitter_content:
+    #         tweet['class'] = 'new-img-sub'
+    # except AttributeError:
+    #     pass
+
+    author = 'Радіо Свобода'
+
+    article_data = {
+        'source_link': 'https://www.radiosvoboda.org/',
+        'article_link': url,
+        'author': author,
+        'source_img': 'imgs/radio_svoboda.jpeg',
+        'source_title': 'Радіо Свобода',
+        'title': title,
+        'date': date,
+        'main_img': {'src': src, 'sign': sign},
+        'content': content.prettify()
+    }
+
+    return article_data
+
+
+def ukrinform_preprocess(url):
+    url = url
+    sign = ''
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, "html.parser")
+
+    title = soup.find('h1', class_='newsTitle').text
+    date = soup.find('div', class_='newsDate').text
+    src = soup.find('img', class_='newsImage')['src']
+    # try:
+    #     sign = soup.find('div', class_='cover-media').find('span', class_='caption').text
+    # except Exception as ex:
+    #     print('ERRRR', ex)
+
+    content = soup.new_tag('div', attrs={'class': 'article-content'})
+    try:
+        lead = soup.new_tag('h2', attrs={
+            'class': 'lead-text'})
+        lead.string = soup.find('div', class_='newsHeading').text
+        content.append(lead)
+    except Exception as ex:
+        print(ex)
+
+    # content1 = soup.find('div', class_='c-prose c-post__inner').select('ul>li>p,p,h2,figure.c-prose__spacer')[2::]
+    content1 = soup.find('div', class_='newsText').select('p')
+    content.extend(content1)
+
+    for i in content.findAll('p'):
+        i['class'] = 'new-text'
+        if i.text.strip() == 'Читайте також:':
+            sibling = i.next_sibling
+            while sibling:
+                next_sibling = sibling.next_sibling
+                sibling.extract()
+                sibling = next_sibling
+            i.decompose()
+
+    for i in content.findAll('h2'):
+        try:
+            if i['class'][0] == 'lead-text':
+                continue
+            if i.text.strip() == 'Читайте також' or i.text.strip() == 'Пов’язані теми':
+                i.decompose()
+        except:
+            i['class'] = 'new-subtitles'
+    for i in content.findAll('h3'):
+        i['class'] = 'new-subtitles'
+        if i.text.strip() == 'Читайте також:':
+            sibling = i.next_sibling
+            while sibling:
+                next_sibling = sibling.next_sibling
+                sibling.extract()
+                sibling = next_sibling
+            i.decompose()
+
+    try:
+        aside_node = content.findAll('aside', {'data': 'ad-container'})
+        for i in aside_node:
+            if i.find('h3', class_='new-subtitles').text == 'Також читайте':
+                i.decompose()
+    except Exception as e:
+        print(e)
+
+    for item, img in zip(content.findAll('figure', class_='c-figure c-prose__spacer'),
+                         content.findAll('div', class_='c-figure__embed u-cover')):
+
+        tag = soup.new_tag('div', attrs={'class': 'new-img-sub'})
+
+        new_tag = soup.new_tag('img', attrs={'src': img.find('img')['src'], 'class': 'new-img-sub', 'loading': 'lazy'})
+        tag.append(new_tag)
+        try:
+            item.find_next('p').decompose()
+            sing_tag = soup.new_tag('p', attrs={
+                'class': 'img-sign-sub'})
+            sing_tag.string = img.find('img')['alt']
+
+            tag.append(sing_tag)
+        except Exception as e:
+            print('ERRR', e)
+
+        item.replace_with(tag)
+
+    # if content.findAll('iframe'):
+    #     for item in content.findAll('iframe'):
+    #         tag = soup.new_tag('div', attrs={'class': 'article-iframe-video'})
+    #         video_tag = soup.new_tag('iframe', attrs={'src': item['data-src'], 'styles': 'width: 43vw; height: 24.2vw', 'loading':'lazy', 'allowfullscreen':''})
+    #         tag.append(video_tag)
+    #         item.replace_with(tag)
+    # try:
+    #     twitter_content = soup.findAll('div', class_='c-figure c-figure__row c-figure__row--sdmd')
+    #     for tweet in twitter_content:
+    #         tweet['class'] = 'new-img-sub'
+    # except AttributeError:
+    #     pass
+
+    author = 'Укрінформ'
+
+    article_data = {
+        'source_link': 'https://www.radiosvoboda.org/',
+        'article_link': url.replace('//', '/'),
+        'author': author,
+        'source_img': 'imgs/ukrinform.webp',
+        'source_title': 'Укрінформ',
+        'title': title,
+        'date': date,
+        'main_img': {'src': src, 'sign': sign},
+        'content': content.prettify()
+    }
+
+    return article_data
+
+
+def interfax_preprocess(url):
+    url = url
+    sign = ''
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, "html.parser")
+
+    title = soup.find('h1', class_='article-content-title').text
+    date = soup.find('div', class_='col-18 article-time').text
+    try:
+        src = soup.find('img', class_='article-content-image')['src']
+    except TypeError:
+        src = ''
+    # try:
+    #     sign = soup.find('div', class_='cover-media').find('span', class_='caption').text
+    # except Exception as ex:
+    #     print('ERRRR', ex)
+
+    content = soup.new_tag('div', attrs={'class': 'article-content'})
+    try:
+        lead = soup.new_tag('h2', attrs={
+            'class': 'lead-text'})
+        lead.string = soup.find('div', class_='newsHeading').text
+        content.append(lead)
+    except Exception as ex:
+        print(ex)
+
+    # content1 = soup.find('div', class_='c-prose c-post__inner').select('ul>li>p,p,h2,figure.c-prose__spacer')[2::]
+    content1 = soup.find('div', class_='article-content').select('div.article-content > p')
+    content.extend(content1)
+
+    for i in content.findAll('p'):
+        i['class'] = 'new-text'
+        if i.text.strip() == 'Читайте також:':
+            sibling = i.next_sibling
+            while sibling:
+                next_sibling = sibling.next_sibling
+                sibling.extract()
+                sibling = next_sibling
+            i.decompose()
+
+    for i in content.findAll('h2'):
+        try:
+            if i['class'][0] == 'lead-text':
+                continue
+            if i.text.strip() == 'Читайте також' or i.text.strip() == 'Пов’язані теми':
+                i.decompose()
+        except:
+            i['class'] = 'new-subtitles'
+    for i in content.findAll('h3'):
+        i['class'] = 'new-subtitles'
+        if i.text.strip() == 'Читайте також:':
+            sibling = i.next_sibling
+            while sibling:
+                next_sibling = sibling.next_sibling
+                sibling.extract()
+                sibling = next_sibling
+            i.decompose()
+
+    try:
+        aside_node = content.findAll('aside', {'data': 'ad-container'})
+        for i in aside_node:
+            if i.find('h3', class_='new-subtitles').text == 'Також читайте':
+                i.decompose()
+    except Exception as e:
+        print(e)
+
+    for item, img in zip(content.findAll('figure', class_='c-figure c-prose__spacer'),
+                         content.findAll('div', class_='c-figure__embed u-cover')):
+
+        tag = soup.new_tag('div', attrs={'class': 'new-img-sub'})
+
+        new_tag = soup.new_tag('img', attrs={'src': img.find('img')['src'], 'class': 'new-img-sub', 'loading': 'lazy'})
+        tag.append(new_tag)
+        try:
+            item.find_next('p').decompose()
+            sing_tag = soup.new_tag('p', attrs={
+                'class': 'img-sign-sub'})
+            sing_tag.string = img.find('img')['alt']
+
+            tag.append(sing_tag)
+        except Exception as e:
+            print('ERRR', e)
+
+        item.replace_with(tag)
+
+    # if content.findAll('iframe'):
+    #     for item in content.findAll('iframe'):
+    #         tag = soup.new_tag('div', attrs={'class': 'article-iframe-video'})
+    #         video_tag = soup.new_tag('iframe', attrs={'src': item['data-src'], 'styles': 'width: 43vw; height: 24.2vw', 'loading':'lazy', 'allowfullscreen':''})
+    #         tag.append(video_tag)
+    #         item.replace_with(tag)
+    # try:
+    #     twitter_content = soup.findAll('div', class_='c-figure c-figure__row c-figure__row--sdmd')
+    #     for tweet in twitter_content:
+    #         tweet['class'] = 'new-img-sub'
+    # except AttributeError:
+    #     pass
+
+    author = 'Інтерфакс'
+
+    article_data = {
+        'source_link': 'https://www.radiosvoboda.org/',
+        'article_link': url,
+        'author': author,
+        'source_img': 'imgs/interfax.webp',
+        'source_title': 'Інтерфакс',
+        'title': title,
+        'date': date,
+        'main_img': {'src': src, 'sign': sign},
+        'content': content.prettify()
+    }
+
+    return article_data
+
 class ArticlePreprocessor:
     @staticmethod
     def create(source, url):
@@ -204,6 +568,12 @@ class ArticlePreprocessor:
             return tsn_preprocess(url)
         elif source == 'unian':
             return unian_preprocess(url)
+        elif source == 'radio_svoboda':
+            return radio_svoboda_preprocess(url)
+        elif source == 'ukrinform':
+            return ukrinform_preprocess(url)
+        elif source == 'interfax':
+            return interfax_preprocess(url)
         else:
             raise ValueError(f"Unsupported source: {source}")
 #

@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 import cloudscraper
 import requests
 from tqdm import tqdm  # Для прогрес-бару при парсингу
-import spacy
 
 
 class ArticleParser:
@@ -68,13 +67,13 @@ class Parsing:
         page = requests.get(url)
         soup = BeautifulSoup(page.text, "html.parser")
 
-        for x in tqdm(soup.find('div', class_="l-row l-flex _l-order-aside-tr u-hide--sdmd").findAll('div', class_='l-col l-col--xs l-gap'), desc=f'Parsing all tsn page-{page_tsn}'):
+        for x in tqdm(soup.find('ul', class_="l-entries l-entries--bordered").findAll('li', class_='l-entries__item'), desc=f'Parsing all tsn page-{page_tsn}'):
             try:
                 self.news.append(ArticleParser(
-                    x.find('a', class_='c-card__link')['href'],
-                    x.find('a', class_='c-card__link').text.strip(),
-                    x.find('dd', class_='c-bar__label').text.strip(),
-                    x.find('img', class_='c-card__embed__img')['data-src'],
+                    x.find('a', class_='c-entry__link u-link-overlay')['href'],
+                    x.find('a', class_='c-entry__link u-link-overlay').text.strip(),
+                    x.find('time', class_='text-current c-bar__link c-entry__time').text.strip(),
+                    x.find('source')['srcset'],
                     'tsn'
                 ))
             except Exception as ex:
@@ -138,8 +137,18 @@ class Parsing:
         page = scraper.get(url)
         soup = BeautifulSoup(page.text, "html.parser")
 
-        [self.news.append(x.text.strip()) for x in
-         tqdm(soup.findAll('a', class_='article-link'),desc=f'Parsing all interfax')]
+        for x in tqdm(soup.findAll('div', class_='grid article'), desc='Parsing all interfax'):
+            # print(x)
+            try:
+                self.news.append(ArticleParser(
+                    url=f'https://interfax.com.ua/{x.find('a', class_='article-link')['href']}',
+                    title=x.find('a', class_='article-link').text.strip(),
+                    date=f'{x.find('div', class_='col-13 article-time').findAll('span')[0].text}, {x.find('div', class_='col-13 article-time').findAll('span')[1].text}',
+                    img_url=x.find('div', class_='col-23').find('img', class_='article-image')['src'],
+                    source='interfax'
+                ))
+            except Exception as ex:
+                print(f'INTERFAX ERROR - {ex}')
 
     def ukrinform(self):
         scraper = cloudscraper.create_scraper()
@@ -149,8 +158,17 @@ class Parsing:
         page = scraper.get(url)
         soup = BeautifulSoup(page.text, "html.parser")
 
-        [self.news.append(x.text.strip()) for x in
-         tqdm(soup.find('section', class_='restList').findAll('h2'),desc=f'Parsing all ukrinform') if x.text.strip() != '']
+        for x in tqdm(soup.find('section', class_="restList").findAll('article'), desc=f'Parsing all ukrinform'):
+            try:
+                self.news.append(ArticleParser(
+                    url=f"https://www.ukrinform.ua/{x.find('a')['href']}",
+                    title=x.find('img')['alt'],
+                    date=x.find('time')['datetime'],
+                    img_url=x.find('img')['src'].strip().replace('360_240', '630_360'),
+                    source='ukrinform'
+                ))
+            except Exception as ex:
+                print(f'UKR_INFORM ERROR - {ex}')
 
     def glavcom(self):
         scraper = cloudscraper.create_scraper()
@@ -175,6 +193,9 @@ class Parsing:
         [self.news.append(x.text.strip()) for x in
          tqdm(soup.findAll('a', class_='content-news__link sunsite_action'),desc=f'Parsing all znua')]
 
+    def rbk_ukr(self):
+        pass
+
     def show_news(self):
         for data in self.news:
             print(data)
@@ -190,20 +211,6 @@ class Parsing:
 
 # 'https://news.liga.net/ua'
 
-tt = Parsing()
-tt.tsn()
-tt.unian()
-tt.radio_svoboda()
-
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
-
-
-def preprocess_text(text):
-    text = text.lower()
-    text = re.sub(r'[^\w\s]', '', text, flags=re.UNICODE)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
-
 
 # Завантаження моделі для класифікації тексту
 # classifier = pipeline("zero-shot-classification",
@@ -213,11 +220,6 @@ def preprocess_text(text):
 
 # model_name = "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"
 #
-tokenizer = AutoTokenizer.from_pretrained("MoritzLaurer/mDeBERTa-v3-base-mnli-xnli")
-model = AutoModelForSequenceClassification.from_pretrained("MoritzLaurer/mDeBERTa-v3-base-mnli-xnli")
-
-classifier = pipeline("zero-shot-classification", model=model, tokenizer=tokenizer)
-
 
 # categories = {
 #     "Політика": [
@@ -538,18 +540,6 @@ def classify_news(text):
         "Підкатегорія": f"{sub_category}: {sub_score:.2%}"
     }
 
-
-for text in tt.news:
-    # Завантажте NLP-модель для української мови
-    nlp = spacy.load("uk_core_news_sm")
-
-    # Аналіз тексту
-    doc = nlp(text.title)
-
-    # Витяг географічних назв
-    places = [ent.text for ent in doc.ents if ent.label_ == "LOC"]  # GPE: геополітична сутність
-    print(text, '\n', places)
-
     # Текст для аналізу
     # candidate_labels = [
     #     'Україна',
@@ -583,153 +573,4 @@ for text in tt.news:
     #     "Суспільство / Соціальні питання",
     #     "Ігри та кіберспорт",
     #     "Екологія",
-    #     "Інше"
-    # ]
-
-    result = classify_news(text.title)
-    print("Текст для аналізу:")
-    print(result["Текст для аналізу"], "\n")
-    print(result["Головна категорія"])
-    print(result["Підкатегорія"], "\n")
-    print("-" * 80)
-
-
-# from google.cloud import language_v1
-#
-# client = language_v1.LanguageServiceClient()
-#
-# text = "Збірна України виграла матч на чемпіонаті світу"
-# document = {"content": text, "type_": language_v1.Document.Type.PLAIN_TEXT}
-# response = client.classify_text(request={"document": document})
-#
-# for category in response.categories:
-#     print(f"Category: {category.name}, Confidence: {category.confidence}")
-
-
-
-# Плоский список категорій
-# flat_categories = [
-#     "Політика",
-#     "Внутрішня політика",
-#     "Міжнародна політика",
-#     "Законодавство",
-#     "Політичні партії",
-#     "Вибори",
-#     "Економіка та бізнес",
-#     "Фінанси",
-#     "Бізнес-новини",
-#     "Ринок праці",
-#     "Підприємництво",
-#     "Торгові угоди",
-#     "Технології та наука",
-#     "Інформаційні технології",
-#     "Наукові дослідження",
-#     "Інновації",
-#     "Космос",
-#     "Медицина",
-#     "Світ",
-#     "Міжнародні події",
-#     "Геополітика",
-#     "Конфлікти",
-#     "Міжнародні організації",
-#     "Дипломатія",
-#     "Україна",
-#     "Внутрішні події",
-#     "Регіональні новини",
-#     "Міста України",
-#     "Суспільні ініціативи",
-#     "Освіта в Україні",
-#     "Війна",
-#     "Бойові дії",
-#     "Стратегія та тактика",
-#     "Збройні сили",
-#     "Конфлікти",
-#     "Оборонні технології",
-#     "Спорт",
-#     "Футбол",
-#     "Баскетбол",
-#     "Теніс",
-#     "Олімпійські ігри",
-#     "Інші види спорту",
-#     "Здоров'я та медицина",
-#     "Медицина",
-#     "Здоровий спосіб життя",
-#     "Хвороби",
-#     "Фармацевтика",
-#     "Психологія",
-#     "Культура та мистецтво",
-#     "Мистецтво",
-#     "Література",
-#     "Музика",
-#     "Кіно та театр",
-#     "Виставки та фестивалі",
-#     "Шоу-бізнес / Розваги",
-#     "Кінематограф",
-#     "Телебачення",
-#     "Музиканти та актори",
-#     "Світські події",
-#     "Паліативні події",
-#     "Подорожі / Туризм",
-#     "Туристичні напрямки",
-#     "Транспорт",
-#     "Готелі та проживання",
-#     "Автомобілі",
-#     "Кулінарні подорожі",
-#     "Освіта та соціальні питання",
-#     "Освіта та навчання",
-#     "Пенсії та соціальні виплати",
-#     "Волонтерство та благодійність",
-#     "Кримінал та правопорушення",
-#     "Суспільні події та ініціативи",
-#     "Демографія та міграція",
-#     "Ігри та кіберспорт",
-#     "Відеоігри",
-#     "Кіберспорт",
-#     "Розробка ігор",
-#     "Ігрова індустрія",
-#     "VR/AR технології",
-#     "Екологія",
-#     "Навколишнє середовище",
-#     "Кліматичні зміни",
-#     "Збереження природи",
-#     "Відходи та переробка",
-#     "Енергетика",
-#     "Інше",
-#     "Невизначені теми",
-#     "Нестандартні новини",
-#     "Технічні помилки",
-#     "Інші категорії"
-# ]
-#
-#
-# def classify_news(text):
-#     # Крок 1: Класифікація за плоским списком категорій
-#     result = classifier(text, flat_categories, multi_label=False)
-#     top_category = result['labels'][0]
-#     top_score = result['scores'][0]
-#
-#     return {
-#         "Текст для аналізу": f"\"{text}\"",
-#         "Головна категорія": f"{top_category}: {top_score:.2%}"
-#     }
-#
-#
-# # Ініціалізація spaCy для української мови
-# nlp = spacy.load("uk_core_news_sm")
-#
-#
-# for text in tt.news:
-#     # Аналіз тексту
-#     doc = nlp(text.title)
-#
-#     # Витяг географічних назв
-#     places = [ent.text for ent in doc.ents if ent.label_ in ["LOC", "GPE"]]
-#     print(text, '\n', places)
-#
-#     # Класифікація
-#     result = classify_news(text.title)
-#     print("Текст для аналізу:")
-#     print(result["Текст для аналізу"], "\n")
-#     print(result["Головна категорія"], "\n")
-#     print("-" * 80)
 

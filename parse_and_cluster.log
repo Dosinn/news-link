@@ -1,0 +1,8 @@
+2025-01-10 09:59:10,974 [INFO] Using device: cpu
+2025-01-10 09:59:10,975 [INFO] Load pretrained SentenceTransformer: ./static/best_model
+2025-01-10 09:59:33,901 [INFO] Using device: cpu
+2025-01-10 09:59:33,901 [INFO] Load pretrained SentenceTransformer: static/best_model
+2025-01-10 09:59:34,053 [WARNING] No sentence-transformers model found with name static/best_model. Creating a new one with mean pooling.
+2025-01-10 14:47:58,746 [INFO] Using device: cpu
+2025-01-10 14:47:58,748 [INFO] Load pretrained SentenceTransformer: static/best_model
+2025-01-10 14:47:58,910 [WARNING] No sentence-transformers model found with name static/best_model. Creating a new one with mean pooling.
